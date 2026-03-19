@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, DateTime, func, Text, ForeignKey
+from sqlalchemy import Column, Integer, String, DateTime, func, Text, ForeignKey, Boolean
 from sqlalchemy.orm import relationship
 
 from ..core.database import Base
@@ -14,9 +14,9 @@ class User(Base):
     patronymic = Column(String, nullable=False)
     email = Column(String, nullable=False, unique=True, index=True)
     password = Column(Text, nullable=False)
-    repeat_password = Column(Text, nullable=False)
     role_id = Column(Integer, ForeignKey("roles.id"))
     
     created_at = Column(DateTime, server_default=func.now())
+    is_active = Column(Boolean, default=True, nullable=False)
     
-    
+    role = relationship("Role")
