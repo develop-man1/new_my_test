@@ -5,10 +5,10 @@ from typing import Optional
 from datetime import timedelta, datetime, timezone
 import jwt
 
-from ..core.config import settings
+from .config import settings
 
 
-pwd_context = CryptContext(schemes="argon2", deprecated="auto")
+pwd_context = CryptContext(schemes=["argon2"], deprecated="auto")
 
 
 def hash_password(password: str) -> str:
@@ -19,7 +19,7 @@ def verify_password(plain_password: str, hashed_password: str) -> bool:
     return pwd_context.verify(plain_password, hashed_password)
 
 
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="")
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/login")
 
 
 def create_access_token(subject: str, expires_delta: Optional[timedelta] = None) -> str:
