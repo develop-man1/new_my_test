@@ -1,4 +1,5 @@
 from pydantic import BaseModel, Field
+from typing import Optional
 
 
 class RoleCreate(BaseModel):
@@ -11,4 +12,4 @@ class RoleResponse(BaseModel):
     
     id: int = Field(...)
     name: str
-    description: str
+    description: Optional[str] = None

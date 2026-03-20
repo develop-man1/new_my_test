@@ -1,4 +1,4 @@
-from pydantic import BaseModel, Field, EmailStr
+from pydantic import BaseModel, Field, EmailStr, model_validator, ConfigDict
 from datetime import datetime
 from typing import Optional
 from enum import Enum
@@ -18,8 +18,14 @@ class UserCreate(BaseModel):
     patronymic: str = Field(...)
     email: EmailStr = Field(...)
     password: str = Field(..., min_length=8)
-    repeat_password = password
+    repeat_password: str = Field(...)
     role: RoleEnum = RoleEnum.user
+    
+    @model_validator(mode="after")
+    def password_comparison(self):
+        if self.password != self.repeat_password:
+            raise ValueError("Password dont match")
+        return self
     
 class UserResponse(BaseModel):
     
@@ -30,7 +36,9 @@ class UserResponse(BaseModel):
     email: str
     role: RoleEnum
     created_at: datetime
-    is_active = True
+    is_active: bool = True
+    
+    model_config = ConfigDict(from_attributes=True)
     
     
 class UserUpdate(BaseModel):

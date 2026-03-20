@@ -12,4 +12,4 @@ class Role(Base):
     name = Column(String, nullable=False, unique=True, index=True)
     description = Column(Text)
     
-    permissions = relationship("Permission", secondary="role_permission")
+    permissions = relationship("Permission", secondary="role_permissions")
