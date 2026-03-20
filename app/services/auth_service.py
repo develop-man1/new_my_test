@@ -25,7 +25,7 @@ class AuthService:
         if not user.is_active: # type: ignore
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
-                detail="User is deactivated"
+                detail="User is deactivate"
             )
         
         if not verify_password(login_data.password, user.password): # type: ignore
