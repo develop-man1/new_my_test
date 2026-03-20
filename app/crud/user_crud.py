@@ -1,5 +1,5 @@
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import update, delete
+from sqlalchemy import select, update
 from typing import Optional
 
 from ..models.user import User
@@ -11,10 +11,28 @@ class UserCrud:
     def __init__(self, db: AsyncSession):
         self.db = db
         
-    
-    async def user_create(self, user_data: UserCreate) -> User:
         
-        new_user = User(**user_data.model_dump())
+    async def get_user_by_id(self, id: int) -> Optional[User]:
+        
+        stmt = select(User).where(User.id == id)
+        result = await self.db.execute(stmt)
+        
+        return result.scalar_one_or_none()
+    
+    
+    async def get_uder_by_email(self, email: str) -> Optional[User]:
+        
+        stmt = select(User).where(User.email == email)
+        result = await self.db.execute(stmt)
+        
+        return result.scalar_one_or_none()
+        
+    
+    async def user_create(self, user_data: UserCreate, hashed_password: str) -> User:
+        
+        data = user_data.model_dump(exclude={"password", "repeat_password", "role"})
+        
+        new_user = User(**data, password=hashed_password)
         
         self.db.add(new_user)
         await self.db.commit()
@@ -34,11 +52,9 @@ class UserCrud:
     
     async def user_delete(self, id: int) -> Optional[User]:
         
-        stmt = delete(User).where(User.id == id).returning(User)
+        stmt = update(User).where(User.id == id).values(is_active=False).returning(User)
         result = await self.db.execute(stmt)
-        
-        deleted_user = result.scalar_one_or_none()
         
         await self.db.commit()
         
-        return deleted_user
+        return result.scalar_one_or_none()
