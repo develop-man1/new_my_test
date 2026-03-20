@@ -20,7 +20,7 @@ class UserCrud:
         return result.scalar_one_or_none()
     
     
-    async def get_uder_by_email(self, email: str) -> Optional[User]:
+    async def get_user_by_email(self, email: str) -> Optional[User]:
         
         stmt = select(User).where(User.email == email)
         result = await self.db.execute(stmt)
@@ -28,11 +28,11 @@ class UserCrud:
         return result.scalar_one_or_none()
         
     
-    async def user_create(self, user_data: UserCreate, hashed_password: str) -> User:
+    async def user_create(self, user_data: UserCreate, hashed_password: str, role_id: int) -> User:
         
         data = user_data.model_dump(exclude={"password", "repeat_password", "role"})
         
-        new_user = User(**data, password=hashed_password)
+        new_user = User(**data, password=hashed_password, role_id=role_id)
         
         self.db.add(new_user)
         await self.db.commit()
