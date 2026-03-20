@@ -3,6 +3,8 @@ from datetime import datetime
 from typing import Optional
 from enum import Enum
 
+from .role import RoleResponse
+
 
 class RoleEnum(str, Enum):
     
@@ -34,7 +36,7 @@ class UserResponse(BaseModel):
     surname: str
     patronymic: str
     email: str
-    role: RoleEnum
+    role: RoleResponse
     created_at: datetime
     is_active: bool = True
     
